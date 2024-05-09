@@ -2,11 +2,11 @@
 py -m venv likelionteam5_env
 
 [가상환경 접속]
-.\venv\Scripts\activate
+.\likelionteam5_env\Scripts\activate
 
 [장고 설치]
 pip install django==x.x
 
 [프로젝트 생성]
-django-admin startproject likelion_homepage_project .
+django-admin startproject config .
 
