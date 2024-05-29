@@ -18,8 +18,6 @@ class MyUserManager(BaseUserManager):
             raise ValueError('이 필드는 필수입니다.')
         if not year:
             raise ValueError('이 필드는 필수입니다.')
-        if not introduction:
-            raise ValueError('이 필드는 필수입니다.')
         if not part:
             raise ValueError('이 필드는 필수입니다.')
 
@@ -69,7 +67,7 @@ class MyUser(AbstractBaseUser):
     currentPosition = models.CharField(max_length=4)
     userPhoto = models.ImageField(upload_to='member_photos/', default='member_photos/default.png', blank=True, null=True)
     year = models.IntegerField()
-    introduction = models.TextField(max_length=100)
+    introduction = models.TextField(max_length=100, blank=True, null=True)
     part = models.CharField(max_length=100, choices=part_type_choices)
     is_active = models.BooleanField(default=True)
     is_admin = models.BooleanField(default=False)
@@ -77,7 +75,7 @@ class MyUser(AbstractBaseUser):
     objects = MyUserManager()
 
     USERNAME_FIELD = 'memberId' 
-    REQUIRED_FIELDS = ['studentNumber', 'name', 'currentPosition', 'year', 'introduction', 'part']
+    REQUIRED_FIELDS = ['studentNumber', 'name', 'currentPosition', 'year', 'part']
 
     def __str__(self):
         return self.memberId
