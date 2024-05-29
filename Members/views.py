@@ -7,7 +7,9 @@ from rest_framework import mixins
 from rest_framework import generics
 from rest_framework import viewsets
 from rest_framework.permissions import IsAuthenticated
+from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework.exceptions import PermissionDenied
+from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from django.contrib.auth.decorators import login_required, permission_required
 from .models import MyUser
 from .serializers import *
@@ -17,7 +19,14 @@ class LoginView(APIView):
     def post(self, request): #FBV는 if request.method =="POST"로
         serializer = LoginSerializer(data = request.data)
         if serializer.is_valid(raise_exception=True):
-            return Response({"message": "로그인이 완료되었습니다."}, status=status.HTTP_200_OK)
+            user = serializer.validated_data['user']
+            refresh = RefreshToken.for_user(user)
+            access = refresh.access_token
+            return Response({
+                "message": "로그인이 완료되었습니다.",
+                "refresh": str(refresh),
+                "access": str(access)
+            }, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 class JoinView(APIView):
@@ -26,6 +35,9 @@ class JoinView(APIView):
         #print(serializer.initial_data)
         if serializer.is_valid():
             serializer.save()
+            token = TokenObtainPairSerializer.get_token(user)
+            refresh_token = str(token)
+            access_token = str(token.access_token)
             #print(serializer.data)
             return Response({"message": "회원가입이 완료되었습니다."}, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
